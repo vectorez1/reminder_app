@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "nodemon ./src/main.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.7",
     "vite": "^6.0.1"
   },
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "mysql2": "^3.11.5"
   }
 }
