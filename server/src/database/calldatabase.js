@@ -9,7 +9,7 @@ const pool = mysql2
   })
   .promise();
 
-export async function getItems(tabla, filtro=null) {
+export async function getItems(tabla, filtro = null) {
   try {
     const tablasPermitidas = [
       "INQUILINO",

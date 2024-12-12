@@ -1,4 +1,4 @@
-export const InputText = ({ title = "Input", name }) => {
+export const InputText = ({ title = "Input", name, required = false }) => {
   return (
     <div className="flex flex-1 flex-col gap-1">
       <label
@@ -10,6 +10,7 @@ export const InputText = ({ title = "Input", name }) => {
       <input
         type="text"
         name={name}
+        required={required}
         id={name}
         className="border-[1px] border-solid border-[var(--main)] rounded-md h-[40px] px-2"
       />

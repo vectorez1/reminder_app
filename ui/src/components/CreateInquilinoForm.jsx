@@ -1,9 +1,7 @@
 import { useRef } from "react";
 import { InputText } from "./InputText";
-import { Conexion } from "../conexion/conexion";
 
-export const CreateInquilinoForm = () => {
-  const { postData, createInquilino } = Conexion;
+export const CreateInquilinoForm = ({ onSubmit }) => {
   const ref = useRef();
   return (
     <form action="" ref={ref} className="flex flex-col gap-2 ">
@@ -22,15 +20,7 @@ export const CreateInquilinoForm = () => {
       <button
         onClick={(e) => {
           e.preventDefault();
-          postData(
-            "inquilino",
-            createInquilino({
-              nombre: ref.current.nombre.value,
-              apellido: ref.current.apellido.value,
-              renta: Number(ref.current.renta.value),
-              direccion: ref.current.direccion.value,
-            })
-          );
+          onSubmit(ref.current);
         }}
         className="bg-[var(--main)] w-fit text-white px-2 py-1 rounded-md"
       >
