@@ -9,7 +9,7 @@ const pool = mysql2
   })
   .promise();
 
-export async function getItems(tabla) {
+export async function getItems(tabla, filtro=null) {
   try {
     const tablasPermitidas = [
       "INQUILINO",
@@ -20,9 +20,15 @@ export async function getItems(tabla) {
     if (!tablasPermitidas.includes(tabla)) {
       throw new Error("Tabla no permitida");
     }
+    let query = `SELECT * FROM ${tabla}`;
+    const params = [];
 
+    if (filtro && filtro.columna && filtro.valor) {
+      query += ` WHERE ${filtro.columna} = ?`;
+      params.push(filtro.valor);
+    }
     // Ejecutar la consulta
-    const [rows] = await pool.query(`SELECT * FROM ${tabla}`);
+    const [rows] = await pool.query(query, params);
     return rows;
   } catch (error) {
     console.error("Error al obtener datos:", error.message);
