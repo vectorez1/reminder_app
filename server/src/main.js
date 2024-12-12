@@ -98,10 +98,10 @@ server.post("/inquilino_contacto", async (request, response) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   try {
     const { body } = request;
-    if (!emailRegex.test(body.email)){
+    if (!emailRegex.test(body.email)) {
       return response
-      .status(407)
-      .json({message: "Formato de email no válido"})
+        .status(407)
+        .json({ message: "Formato de email no válido" });
     }
     await insertItems(
       "INQUILINO_CONTACTO",
