@@ -4,19 +4,26 @@ const URL = "https://nmccj9vw-3000.use2.devtunnels.ms";
 
 const server = axios.create({ baseURL: URL });
 
-const createInquilino = ({ nombre, apellido, renta }) => {
+const createInquilino = ({ nombre, apellido, renta, direccion }) => {
   return {
     nombre,
     apellido,
     renta,
+    direccion,
   };
 };
 
-const createAcuerdo = ({ balance, abono, id_inquilino }) => {
+const createAcuerdo = ({
+  balance,
+  abono = null,
+  id_inquilino,
+  descripcion = null,
+}) => {
   return {
     balance,
     abono,
     id_inquilino,
+    descripcion,
   };
 };
 
@@ -71,3 +78,5 @@ export const Conexion = {
   createInquilinoContacto,
   createPago,
 };
+
+getData("acuerdo/6/pago").then((data) => console.log(data));

@@ -1,3 +1,13 @@
+:root {
+  --main: #0e1d82;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.inquilinos_container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 300px); /* 3 equal columns */
+  gap: 10px; /* Optional: for spacing between grid items */
+}
