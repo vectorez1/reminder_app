@@ -1,4 +1,9 @@
-export const InputText = ({ title = "Input", name, required = false }) => {
+export const InputText = ({
+  title = "Input",
+  name,
+  required = false,
+  ...props
+}) => {
   return (
     <div className="flex flex-1 flex-col gap-1">
       <label
@@ -8,6 +13,7 @@ export const InputText = ({ title = "Input", name, required = false }) => {
         {title}
       </label>
       <input
+        {...props}
         type="text"
         name={name}
         required={required}
