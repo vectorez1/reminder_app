@@ -11,7 +11,7 @@ export const InquilinoListItem = ({
   return (
     <div
       onClick={() => {
-        navigate(`/inquilino/${id}`);
+        navigate(`${id}`);
       }}
       className="bg-[var(--main)] text-white rounded-md px-3 py-1 hover:cursor-pointer active:bg-transparent active:border-[2px] active:border-solid active:border-[var(--main)] active:text-[var(--main)] flex flex-col justify-between min-h-[100px]"
     >

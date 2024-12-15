@@ -3,6 +3,7 @@ import { Navbar } from "./components/Navbar";
 import { Home } from "./pages/Home";
 import { Inquilinos } from "./pages/Inquilinos";
 import { Acuerdos } from "./pages/Acuerdos";
+import { Inquilino } from "./pages/Inquilino";
 export const App = () => {
   return (
     <div className="flex w-full h-screen">
@@ -12,7 +13,7 @@ export const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/inquilinos" element={<Inquilinos />} />
-            <Route path="/inquilinos/:id" element={<Inquilinos />} />
+            <Route path="/inquilinos/:id" element={<Inquilino />} />
             <Route path="/acuerdos" element={<Acuerdos />} />
           </Routes>
         </div>

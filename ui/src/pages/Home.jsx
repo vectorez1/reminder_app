@@ -1,3 +1,9 @@
+import { Title } from "../components/Title";
+
 export const Home = () => {
-  return <div>Home</div>;
+  return (
+    <div>
+      <Title />
+    </div>
+  );
 };

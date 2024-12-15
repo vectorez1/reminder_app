@@ -4,7 +4,8 @@ import { InquilinosContainer } from "../components/InquilinoContainer";
 import { CreateInquilinoForm } from "../components/CreateInquilinoForm";
 
 export const Inquilinos = () => {
-  const { getData, postData, createInquilino } = Conexion;
+  const { getData, postData, createInquilino, createInquilinoContacto } =
+    Conexion;
   const queryClient = useQueryClient();
 
   // Fetch inquilinos
@@ -14,9 +15,19 @@ export const Inquilinos = () => {
   });
 
   // Mutation for creating a new inquilino
-  const mutation = useMutation({
-    mutationFn: (formData) => postData("inquilino", createInquilino(formData)),
-    onSuccess: (newInquilino) => {
+  const dataMutation = useMutation({
+    mutationFn: (formData) => {
+      postData("inquilino", createInquilino(formData)).then((response) =>
+        postData(
+          "inquilino_contacto",
+          createInquilinoContacto({
+            email: formData.email,
+            id_inquilino: response.data.data.id,
+          })
+        )
+      );
+    },
+    onSuccess: () => {
       // Invalidate and refetch inquilinos
       queryClient.invalidateQueries(["inquilinos"]);
     },
@@ -31,16 +42,13 @@ export const Inquilinos = () => {
       apellido: formRef.apellido.value,
       renta: Number(formRef.renta.value),
       direccion: formRef.direccion.value,
+      email: formRef.email.value,
     };
     formRef.reset();
 
     // Trigger the mutation
-    mutation.mutate(formData);
+    dataMutation.mutate(formData);
   };
-
-  if (isLoading) {
-    return <p>Cargando...</p>;
-  }
 
   if (isError) {
     return <p>Error: {error.message}</p>;
@@ -49,7 +57,7 @@ export const Inquilinos = () => {
   return (
     <div className="w-full flex flex-col justify-between h-full gap-4">
       <CreateInquilinoForm onSubmit={handleSubmit} />
-      {data && data.length > 0 && <InquilinosContainer inquilinos={data} />}
+      <InquilinosContainer inquilinos={data} isLoading={isLoading} />
     </div>
   );
 };

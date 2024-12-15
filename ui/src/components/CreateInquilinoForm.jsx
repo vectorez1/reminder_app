@@ -12,11 +12,12 @@ export const CreateInquilinoForm = ({ onSubmit }) => {
         <InputText name={"nombre"} title="Nombre" />
         <InputText name={"apellido"} title="Apellido" />
       </div>
-      <InputText name={"direccion"} title="Direccion" />
       <div className="flex gap-2 w-full">
-        <InputText name={"renta"} title="Renta" />
+        <InputText name={"direccion"} title="Direccion" />
         <InputText name={"email"} title="E-Mail" />
       </div>
+      <InputText name={"renta"} title="Renta" />
+
       <button
         onClick={(e) => {
           e.preventDefault();

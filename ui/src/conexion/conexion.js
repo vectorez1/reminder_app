@@ -79,4 +79,4 @@ export const Conexion = {
   createPago,
 };
 
-getData("acuerdo/6/pago").then((data) => console.log(data));
+getData("inquilino_contacto").then((data) => console.log(data));
