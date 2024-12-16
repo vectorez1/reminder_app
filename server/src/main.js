@@ -57,14 +57,17 @@ server.post("/inquilino", async (request, response) => {
     } = request;
     let id = null;
     /*const data =*/ await insertItems(
+      "INQUILINO",
       ["NOMBRE", "APELLIDO", "RENTA", "DIRECCION"],
       [nombre, apellido, renta, direccion]
     )
-      .then((data) => (id = data.insertId))
+      .then((resu) => {
+        id = resu.insertId;
+        console.log(resu.insertId);
+      })
       .catch((error) => {
         throw new Error(error);
       });
-    console.log(data);
     return response.status(201).json({
       message: "Inquilino agregado exitosamente",
       data: { id, nombre, apellido, renta, direccion },

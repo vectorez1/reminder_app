@@ -124,6 +124,7 @@ export async function insertItems(tabla, campos, valores) {
   const query = `INSERT INTO ${tabla} (${campos.join(", ")}) VALUES (${campos
     .map(() => "?")
     .join(", ")});`;
+  console.log(query, valores);
   try {
     const [result] = await pool.execute(query, valores);
     return result;
