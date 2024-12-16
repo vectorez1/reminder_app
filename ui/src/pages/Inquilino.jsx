@@ -47,13 +47,6 @@ export const Inquilino = () => {
           </p>
         </div>
       </div>
-      <div>
-        <div className="">
-          <h2 className=" text-xl w-fit bg-[var(--main)] text-white rounded-md px-3 py-2 hover:cursor-pointer active:bg-transparent active:border-[2px] active:border-solid active:border-[var(--main)] active:text-[var(--main)]  ">
-            Crear Acuerdo
-          </h2>
-        </div>
-      </div>
     </div>
   );
 };
