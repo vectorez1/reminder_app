@@ -15,7 +15,7 @@ export const InputText = ({
       </label>
       <input
         onChange={(e) => {
-          onChange(e);
+          onChange && onChange(e);
         }}
         {...props}
         type="text"

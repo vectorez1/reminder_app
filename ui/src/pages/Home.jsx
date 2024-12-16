@@ -2,12 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Title } from "../components/Title";
 import { Conexion } from "../conexion/conexion";
 import { AcuerdoListItem } from "../components/AcuerdoListItem";
+import { PagoListItem } from "../components/PagoListItem";
 
 export const Home = () => {
   const { getData } = Conexion;
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["acuerdos"],
-    queryFn: () => getData("acuerdo"),
+    queryKey: ["pago"],
+    queryFn: () => getData("pago"),
   });
 
   if (isLoading) {
@@ -15,22 +16,17 @@ export const Home = () => {
   }
 
   if (!isLoading) {
-    //console.log(data);
+    console.log(data);
   }
   return (
     <div className="flex flex-col gap-5">
       <Title />
-      <h1 className="text-xl font-black underline">Acuerdos</h1>
+      <h1 className="text-xl font-black underline">Recordatorios</h1>
       <div className="grid grid-cols-3 gap-3">
         {data &&
-          data.map((acuerdo) => {
+          data.map((pago) => {
             return (
-              <AcuerdoListItem
-                key={acuerdo.ID}
-                balance={acuerdo.BALANCE}
-                descripcion={acuerdo.DESCRIPCION}
-                id_inquilino={acuerdo.ID_INQUILINO}
-              />
+              <PagoListItem key={Number(pago.ID)} id_pago={Number(pago.ID)} />
             );
           })}
       </div>
