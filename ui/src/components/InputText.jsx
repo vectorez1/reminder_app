@@ -2,6 +2,7 @@ export const InputText = ({
   title = "Input",
   name,
   required = false,
+  onChange,
   ...props
 }) => {
   return (
@@ -13,6 +14,9 @@ export const InputText = ({
         {title}
       </label>
       <input
+        onChange={(e) => {
+          onChange(e);
+        }}
         {...props}
         type="text"
         name={name}

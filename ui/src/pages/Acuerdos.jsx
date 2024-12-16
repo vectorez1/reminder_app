@@ -2,9 +2,8 @@ import { FormSubmit } from "../components/FormSubmit";
 import { Selector } from "../components/Selector";
 import { InputText } from "../components/InputText";
 import { Conexion } from "../conexion/conexion";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { Button } from "../components/Button";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 const inquilinos = [
   {
@@ -29,27 +28,57 @@ const inquilinos = [
 
 export const Acuerdos = () => {
   const [inquilino, setInquilino] = useState(null);
-  const [cantidadPago, setCantidadPago] = useState([]);
-  const { getData, postData, createInquilino, createInquilinoContacto } =
-    Conexion;
-  const queryClient = useQueryClient();
+  const { getData, postData, createAcuerdo, createPago } = Conexion;
 
   // Fetch inquilinos
-  const { data, isError, error, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["inquilinos"],
     queryFn: () => getData("inquilino"),
   });
 
+  const acuerdoMutation = useMutation({
+    mutationFn: ({ balance, descripcion, fecha }) => {
+      postData(
+        "acuerdo",
+        createAcuerdo({
+          balance: balance,
+          descripcion: descripcion,
+          id_inquilino: Number(inquilino.ID),
+        })
+      ).then((res) => {
+        postData(
+          "pago",
+          createPago({
+            cantidad: balance,
+            id_acuerdo: res.data.data.id,
+            fecha: fecha,
+          })
+        );
+      });
+    },
+  });
+
+  useEffect(() => {
+    //console.log(inquilino);
+  }, [inquilino]);
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-10 ]">
       <Selector
-        items={data && data}
+        items={data ? data : inquilinos}
         onItemSelected={(inquilino) => {
           setInquilino(inquilino);
-          console.log(inquilino);
         }}
       />
-      <FormSubmit onSubmit={(ref) => console.log(ref)}>
+      <FormSubmit
+        onSubmit={(ref) => {
+          const { balance, descripcion, fecha } = ref.current;
+          acuerdoMutation.mutate({
+            balance: balance.value,
+            descripcion: descripcion.value,
+            fecha: fecha.value,
+          });
+        }}
+      >
         <div className="flex flex-col gap-2">
           <InputText
             name={"balance"}
@@ -68,46 +97,19 @@ export const Acuerdos = () => {
                 p-2
                 rounded-lg`}
             ></textarea>
-            <div>
-              <h2 className="text-xl font-bold underline text-[var(--main)] mb-2">
-                Pagos
-              </h2>
-              {/*
-                Pagos Tienen:
-                -Fecha
-                -Cantidad
-                -ID_ACUERDO
-                -Pagado
-              */}
-              {cantidadPago.map((_, index) => {
-                return (
-                  <div key={index} className="pago flex flex-col gap-2">
-                    <InputText name={"cantidad"} title="Cantidad" />
-                    <div className="flex flex-col gap-1">
-                      <label
-                        htmlFor="fecha"
-                        className="font-semibold bg-[var(--main)] w-fit rounded-md px-2 text-white flex items-center justify-center text-center "
-                      >
-                        Fecha
-                      </label>
-                      <input
-                        type="date"
-                        id="fecha"
-                        placeholder="Cantidad"
-                        className="border-[1px] border-[var(--main)] p-2 rounded-lg"
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  setCantidadPago((prev) => [...prev, []]);
-                }}
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="fecha"
+                className="font-semibold bg-[var(--main)] w-fit rounded-md px-2 text-white flex items-center justify-center text-center"
               >
-                Agregar Pago
-              </Button>
+                Fecha
+              </label>
+              <input
+                type="date"
+                name="fecha"
+                id="fecha"
+                className="border-[1px] border-solid border-[var(--main)] rounded-md h-[40px] px-2"
+              />
             </div>
           </div>
         </div>

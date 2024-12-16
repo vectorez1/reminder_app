@@ -63,7 +63,7 @@ const getData = async (path) => {
 const postData = async (path, data) => {
   try {
     const response = server.post(`/${path}`, data);
-    console.log("posteando klk");
+    //console.log("posteando klk");
     return response;
   } catch (err) {
     throw new Error("Error Fetching the Data: " + err);
@@ -78,5 +78,3 @@ export const Conexion = {
   createInquilinoContacto,
   createPago,
 };
-
-getData("inquilino_contacto").then((data) => console.log(data));
