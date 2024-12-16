@@ -1,20 +1,37 @@
 import express from "express";
 import cors from "cors";
-import { getItems, insertItems } from "./database/calldatabase.js";
+import { getItems, insertItems, deleteItems } from "./database/calldatabase.js";
 
 const server = express();
-
-server.use(cors());
 
 server.use(express.json());
 
 server.listen(3000);
+
+server.use(cors());
 
 server.get("/", (request, response) => {
   return response.send("<p>hola</p>");
 });
 
 //INQUILINO
+
+server.delete("/inquilino", async (request, response) => {
+  try {
+    const {
+      body: { tabla, valor },
+    } = request;
+    const result = await deleteItems(tabla, valor);
+    return response
+      .status(200)
+      .json({ message: "Datos eliminados correctamente", result });
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({
+      error: "Error al eliminar los datos",
+    });
+  }
+});
 
 server.get("/inquilino", async (request, response) => {
   try {
@@ -27,36 +44,37 @@ server.get("/inquilino", async (request, response) => {
 
       return response.json(resultadoFiltrado);
     }
-    console.log(request.query);
-    console.log(tabla);
     return response.json(tabla);
   } catch (error) {
-    console.error(error);
     return response.status(500).json({ error: "Error al obtener los datos" });
   }
 });
 
 server.post("/inquilino", async (request, response) => {
   try {
-    const { body } = request;
-
-    const data = await insertItems(
+    const {
+      body: { nombre, apellido, renta, direccion },
+    } = request;
+    let id = null;
+    /*const data =*/ await insertItems(
       "INQUILINO",
       ["NOMBRE", "APELLIDO", "RENTA", "DIRECCION"],
-      [body.nombre, body.apellido, body.renta, body.direccion]
-    );
-    console.log(data);
-    return response
-      .status(201)
-      .json({ message: "Inquilino agregado exitosamente" });
+      [nombre, apellido, renta, direccion]
+    )
+      .then((resu) => {
+        id = resu.insertId;
+        console.log(resu.insertId);
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
+    return response.status(201).json({
+      message: "Inquilino agregado exitosamente",
+      data: { id, nombre, apellido, renta, direccion },
+    });
   } catch (error) {
     console.error(error);
-    return response
-      .status(500)
-      .json({
-        error:
-          "Error al insertar los datos(Bro ya agregue direccion, es not null)",
-      });
+    return response.status(500).json({ error: "Error al insertar los datos" });
   }
 });
 
@@ -91,20 +109,6 @@ server.get("/inquilino/:id", async (request, response) => {
   }
 });
 //INQUILINO_CONTACTO
-//get inquilino contacto segun id inquilino
-server.get("/inquilino/:id/inquilino_contacto", async (request, response) => {
-  try {
-    const { id } = request.params;
-    console.log(id);
-    const inquilino_contacto = await getItems("INQUILINO_CONTACTO", {
-      columna: "ID_INQUILINO",
-      valor: body.id,
-    });
-    response.status(200).json(inquilino_contacto);
-  } catch (error) {
-    return response.status(500).json({ error: "Error al obtener los datos" });
-  }
-});
 server.get("/inquilino_contacto", async (request, response) => {
   try {
     const tabla = await getItems("INQUILINO_CONTACTO");
@@ -117,12 +121,13 @@ server.get("/inquilino_contacto", async (request, response) => {
 });
 
 server.post("/inquilino_contacto", async (request, response) => {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   try {
+    //const { body } = request;
     const {
-      body: { email, telefono, id_inquilino },
+      body: { email, telefono = null, id_inquilino },
     } = request;
-    if (!emailRegex.test(body.email)) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
       return response
         .status(407)
         .json({ message: "Formato de email no válido" });
@@ -132,9 +137,10 @@ server.post("/inquilino_contacto", async (request, response) => {
       ["EMAIL", "TELEFONO", "ID_INQUILINO"],
       [email, telefono, id_inquilino]
     );
-    return response
-      .status(201)
-      .json({ message: "Inquilino_Contacto agregado exitosamente" });
+    return response.status(201).json({
+      message: "Inquilino_Contacto agregado exitosamente",
+      data: { email, telefono, id_inquilino },
+    });
   } catch (error) {
     console.error(error);
     return response.status(500).json({ error: "Error al insertar los datos" });
@@ -155,34 +161,50 @@ server.get("/acuerdo", async (request, response) => {
 
 server.post("/acuerdo", async (request, response) => {
   try {
-    const { body } = request;
+    const {
+      body: { balance, abono = null, id_inquilino, descripcion },
+    } = request;
+    let id = null;
     await insertItems(
       "ACUERDO",
       ["BALANCE", "ABONO", "ID_INQUILINO", "DESCRIPCION"],
-      [body.balance, body.abono, body.id_inquilino, body.descripcion]
-    );
-    return response
-      .status(201)
-      .json({ message: "Acuerdo agregado exitosamente" });
+      [balance, abono, id_inquilino, descripcion]
+    )
+      .then((data) => (id = data.insertId))
+      .catch((error) => {
+        throw new Error(error);
+      });
+    return response.status(201).json({
+      message: "Acuerdo agregado exitosamente",
+      data: { id, balance, abono, id_inquilino, descripcion },
+    });
   } catch (error) {
     console.error(error);
     return response.status(500).json({ error: "Error al insertar los datos" });
   }
 });
-//Get Acuerdo Segun id
-server.get("/inquilino/:id/acuerdos", async (request, response) => {
+//PAGO
+//Get acuerdo y inquilino segun el pago
+server.get("/pago/:id/acuerdo/inquilino", async (request, response) => {
   try {
     const { id } = request.params;
-    const acuerdos = await getItems("ACUERDO", {
-      columna: "ID_INQUILINO",
-      valor: id,
-    });
-    response.status(201).json(acuerdos);
+    const pagoConAcuerdoConInquilino = await getItems(
+      "PAGO",
+      {
+        columna: "PAGO.ID",
+        valor: id,
+      },
+      [
+        { tablaJoin: "ACUERDO", on: "PAGO.ID_ACUERDO = ACUERDO.ID" },
+        { tablaJoin: "INQUILINO", on: "ACUERDO.ID_INQUILINO = INQUILINO.ID" },
+      ]
+    );
+    response.status(201).json(pagoConAcuerdoConInquilino);
   } catch (error) {
     response.status(500).json({ error: "Error al obtener los datos" });
   }
 });
-//PAGO
+
 // Get pago segun id acuerdo
 server.get("/acuerdo/:id/pago", async (request, response) => {
   try {
@@ -213,11 +235,20 @@ server.post("/pago", async (request, response) => {
     await insertItems(
       "PAGO",
       ["CANTIDAD", "FECHA", "ID_ACUERDO", "ESTA_PAGO", "PAGADO"],
-      [body.cantidad, body.fecha, body.id_acuerdo, body.esta_pago, body.pagado]
+      [
+        body.cantidad,
+        body.fecha,
+        body.id_acuerdo,
+        (body.esta_pago = false),
+        (body.pagado = null),
+      ]
     );
-    return response.status(201).json({ message: "Pago creado exitosamente" });
+    return response
+      .status(201)
+      .json({ message: "Pago creado exitosamente", body });
   } catch (error) {
     console.error(error);
     return response.status(500).json({ error: "Error al insertar los datos" });
   }
 });
+
