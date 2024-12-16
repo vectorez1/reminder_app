@@ -144,3 +144,4 @@ const tabla = "INQUILINO";
 const campos = ["NOMBRE", "APELLIDO", "RENTA"];
 const valores = ["Sarah", "Pereza", 2000.0];
 insertItems(tabla, campos, valores);*/
+

@@ -251,3 +251,4 @@ server.post("/pago", async (request, response) => {
     return response.status(500).json({ error: "Error al insertar los datos" });
   }
 });
+
