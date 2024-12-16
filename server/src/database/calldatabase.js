@@ -1,5 +1,5 @@
 import mysql2 from "mysql2";
-
+//CAMBIAR ESTO
 const pool = mysql2
   .createPool({
     host: "127.0.0.1",
